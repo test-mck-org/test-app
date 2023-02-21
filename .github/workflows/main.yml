@@ -84,4 +84,3 @@ jobs:
           git config user.email "pratyushsoni2021@gmail.com"
           git commit -m "Update compile image version"
           git push origin
-          token: ${{ steps.get_token.outputs.out }} 
