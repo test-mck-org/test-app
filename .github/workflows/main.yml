@@ -1,0 +1,69 @@
+name: CI-POC
+
+on: 
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+  
+
+env:
+  # Use docker.io for Docker Hub if empty..
+  REGISTRY_2: mckinsey-docker.jfrog.io
+  gh_app_private_key: ${{ secrets.gh_app_private_key }}
+
+jobs:
+  build:
+    runs-on: [linux, McK]
+    permissions: 
+      contents: write
+      packages: write
+      id-token: write
+    outputs:
+      app1_tag: ${{ steps.output_step.outputs.app1_tag }}
+    steps:
+      - name: Log into registry ${{ env.REGISTRY }}
+        uses: docker/login-action@v2.0.0
+        with:
+          registry: ${{ env.REGISTRY_2 }}
+          username: ${{ secrets.CLOUD_ARTIFACTORY_USER }}
+          password: ${{ secrets.CLOUD_ARTIFACTORY_PASS }}
+      - name: Checkout repository
+        uses: actions/checkout@v2.4.0
+        with:
+          fetch-depth: 0
+          path: ./source_code
+          ref: test_github_app
+      - uses: actions/setup-node@v3 # setting up node env to run script which will generate JWT token...
+        with:
+          node-version: 16
+      - run: npm install jsonwebtoken # installing jsonwebtoken module..
+      - name: Get Base64 decoded Github app Private key # here Private key is stored as a Github action repo secret in base64 encoded format. We are fetching the repo secret in this step, decoding it and storing it in a pem file..
+        env:
+          gh_app_private_key: ${{ secrets.gh_app_private_key }}
+        run: |
+          echo "$gh_app_private_key" | base64 --decode >  ./source_code/private-key.pem
+      - name: Get JWT token # running a node script to generate a jwt token...
+        run: node "$(pwd)"/source_code/get-jwt.js
+      - name: Get Installation access token using JWT # Using the JWT token generated above, are calling the below github api to get installation access token....
+        id: get_token
+        run: | 
+          curl -X POST -H "Authorization: Bearer `cat ./source_code/jwt_token`" -H "Accept: application/vnd.github+json" https://api.github.com/app/installations/27674328/access_tokens -o ./source_code/installation_token_file
+          docker run --user `id -u` -e UID=`id -u` -e GID=`id -g` --rm -v "$(pwd):/repo" -w /repo   mckinsey-docker.jfrog.io/mikefarah/yq:4 e '.token' ./source_code/installation_token_file > ./source_code/installation_token
+          echo "::set-output name=out::`cat ./source_code/installation_token`"
+      - name: Checkout Infra repository using the temp installation access token 
+        uses: actions/checkout@v2.4.0
+        with:
+          repository: pratyushmck/test
+          path: './infra'
+          fetch-depth: 0
+          ref: main # use this parameter when a specific branch/tag needs to be checked out..
+          token: ${{ steps.get_token.outputs.out }} # checking out infra repo using the temporary installation token generated as part of get_token step above..
+      - name: Commit a change to Infra repo using the temp installation access token
+        run: |
+          cd infra
+          touch test_file
+          git add .
+          git config user.name svc-eti-github
+          git config user.email "eti_dev_team_&_ews@mckinsey.com"
+          git commit -m "Update compile image version"
+          git push origin
