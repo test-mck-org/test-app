@@ -67,3 +67,20 @@ jobs:
           git config user.email "pratyushsoni2021@gmail.com"
           git commit -m "Update compile image version"
           git push origin
+      - name: Checkout test-2 repository using the temp installation access token 
+        uses: actions/checkout@v2.4.0
+        with:
+          repository: test-mck-org/test-2
+          path: './test_2'
+          fetch-depth: 0
+          ref: main # use this parameter when a specific branch/tag needs to be checked out..
+      - name: Commit a change to Test_2 repo using the temp installation access token
+        run: |
+          cd test_2
+          touch test_file
+          git add .
+          git config user.name "pratyush86"
+          git config user.email "pratyushsoni2021@gmail.com"
+          git commit -m "Update compile image version"
+          git push origin
+          token: ${{ steps.get_token.outputs.out }} 
