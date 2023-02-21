@@ -74,6 +74,7 @@ jobs:
           path: './test_2'
           fetch-depth: 0
           ref: main # use this parameter when a specific branch/tag needs to be checked out..
+          token: ${{ steps.get_token.outputs.out }}
       - name: Commit a change to Test_2 repo using the temp installation access token
         run: |
           cd test_2
