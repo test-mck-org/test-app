@@ -50,20 +50,20 @@ jobs:
           curl -X POST -H "Authorization: Bearer `cat ./source_code/jwt_token`" -H "Accept: application/vnd.github+json" https://api.github.com/app/installations/296166/access_tokens -o ./source_code/installation_token_file
           docker run --user `id -u` -e UID=`id -u` -e GID=`id -g` --rm -v "$(pwd):/repo" -w /repo   mckinsey-docker.jfrog.io/mikefarah/yq:4 e '.token' ./source_code/installation_token_file > ./source_code/installation_token
           echo "::set-output name=out::`cat ./source_code/installation_token`"
-      - name: Checkout Infra repository using the temp installation access token 
-        uses: actions/checkout@v2.4.0
-        with:
-          repository: test-mck-org/infra-repo
-          path: './infra'
-          fetch-depth: 0
-          ref: main # use this parameter when a specific branch/tag needs to be checked out..
-          token: ${{ steps.get_token.outputs.out }} # checking out infra repo using the temporary installation token generated as part of get_token step above..
+#       - name: Checkout Infra repository using the temp installation access token 
+#         uses: actions/checkout@v2.4.0
+#         with:
+#           repository: test-mck-org/infra-repo
+#           path: './infra'
+#           fetch-depth: 0
+#           ref: main # use this parameter when a specific branch/tag needs to be checked out..
+#           token: ${{ steps.get_token.outputs.out }} # checking out infra repo using the temporary installation token generated as part of get_token step above..
       - name: Commit a change to Infra repo using the temp installation access token
         run: |
           cd infra
           touch test_file
           git add .
-          git config user.name "pratyush86"
-          git config user.email "pratyushsoni2021@gmail.com"
+          # git config user.name "pratyush86"
+          # git config user.email "pratyushsoni2021@gmail.com"
           git commit -m "Update compile image version"
           git push origin
