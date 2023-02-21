@@ -47,7 +47,7 @@ jobs:
       - name: Get Installation access token using JWT # Using the JWT token generated above, are calling the below github api to get installation access token....
         id: get_token
         run: | 
-          curl -X POST -H "Authorization: Bearer `cat ./source_code/jwt_token`" -H "Accept: application/vnd.github+json" https://api.github.com/app/installations/34443950/access_tokens -d '{"repository":"test-mck-org/infra-repo","permissions":{"contents":"read"}}' -o ./source_code/installation_token_file
+          curl -X POST -H "Authorization: Bearer `cat ./source_code/jwt_token`" -H "Accept: application/vnd.github+json" https://api.github.com/app/installations/34443950/access_tokens -d '{"repository":"test-mck-org/infra-repo","permissions":{"contents":"write"}}' -o ./source_code/installation_token_file
           docker run --user `id -u` -e UID=`id -u` -e GID=`id -g` --rm -v "$(pwd):/repo" -w /repo   mckinsey-docker.jfrog.io/mikefarah/yq:4 e '.token' ./source_code/installation_token_file > ./source_code/installation_token
           echo "::set-output name=out::`cat ./source_code/installation_token`"
       - name: Checkout Infra repository using the temp installation access token 
