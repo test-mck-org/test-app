@@ -63,7 +63,7 @@ jobs:
           cd infra
           touch test_file
           git add .
-          git config user.name pratyush86
+          git config user.name "pratyush86"
           git config user.email "pratyushsoni2021@gmail.com"
           git commit -m "Update compile image version"
           git push origin
