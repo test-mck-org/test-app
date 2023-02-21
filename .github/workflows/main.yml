@@ -60,7 +60,7 @@ jobs:
 #           token: ${{ steps.get_token.outputs.out }} # checking out infra repo using the temporary installation token generated as part of get_token step above..
       - name: Commit a change to Infra repo using the temp installation access token
         run: |
-          cd infra
+          cd source_code
           touch test_file
           git add .
           # git config user.name "pratyush86"
