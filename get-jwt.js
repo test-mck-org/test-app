@@ -14,7 +14,7 @@ var signOptions = {
 
 console.log("Current directory:", __dirname);
 let data = {
-    iss: 222486,
+    iss: 296166,
     iat: Math.floor(Date.now()/1000) - 60,
     exp: Math.floor(Date.now()/1000) + (10 * 60)
 }
