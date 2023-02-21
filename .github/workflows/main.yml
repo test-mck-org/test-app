@@ -32,7 +32,7 @@ jobs:
         with:
           fetch-depth: 0
           path: ./source_code
-          ref: test_github_app
+          ref: main
       - uses: actions/setup-node@v3 # setting up node env to run script which will generate JWT token...
         with:
           node-version: 16
@@ -53,7 +53,7 @@ jobs:
       - name: Checkout Infra repository using the temp installation access token 
         uses: actions/checkout@v2.4.0
         with:
-          repository: pratyushmck/test
+          repository: test-mck-org/test-infra
           path: './infra'
           fetch-depth: 0
           ref: main # use this parameter when a specific branch/tag needs to be checked out..
