@@ -13,7 +13,7 @@ env:
 
 jobs:
   build:
-    runs-on: [linux, McK]
+    runs-on: [linux]
     permissions: 
       contents: write
       packages: write
