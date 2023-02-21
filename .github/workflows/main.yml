@@ -53,7 +53,7 @@ jobs:
       - name: Checkout Infra repository using the temp installation access token 
         uses: actions/checkout@v2.4.0
         with:
-          repository: test-mck-org/test-infra
+          repository: test-mck-org/infra-repo
           path: './infra'
           fetch-depth: 0
           ref: main # use this parameter when a specific branch/tag needs to be checked out..
