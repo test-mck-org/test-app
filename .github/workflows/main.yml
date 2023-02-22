@@ -78,7 +78,7 @@ jobs:
       - name: Commit a change to Test_2 repo using the temp installation access token
         run: |
           cd test_2
-          touch test_file
+          touch test_file_1
           git add .
           git config user.name "pratyush86"
           git config user.email "pratyushsoni2021@gmail.com"
