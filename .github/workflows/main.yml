@@ -67,7 +67,7 @@ jobs:
           git config user.email "pratyushsoni2021@gmail.com"
           git commit -m "Update compile image version"
           git push origin
-      - name: Checkout test-2 repository using the temp installation access token 
+      - name: Checkout test-3 repository using the temp installation access token 
         uses: actions/checkout@v2.4.0
         with:
           repository: test-mck-org/test-3
@@ -78,7 +78,7 @@ jobs:
       - name: Commit a change to Test_2 repo using the temp installation access token
         run: |
           cd test_3
-          touch test_file_1
+          touch test_file
           git add .
           git config user.name "pratyush86"
           git config user.email "pratyushsoni2021@gmail.com"
